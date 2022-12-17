@@ -1,0 +1,139 @@
+<div id="contactList"></div>
+
+<!-- Only load jQuery of not loaded yet -->
+<script type="text/javascript" src="/sites/001909/SiteAssets/jquery-1.11.1.min.js"></script>
+
+<script type="text/javascript">
+	
+	//Set jQuery to noConflict mode to avoid problems
+	$.noConflict();
+	
+	jQuery(document).ready(function() {
+		//Add CSS to page head
+		jQuery("head").append("<link rel='stylesheet' href='/sites/001909/SiteAssets/AdvancedContacts/AdvancedContacts.css' type='text/css' media='screen' />");
+		
+	});
+	
+	//Call methods to load list items
+	SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {});
+	SP.SOD.executeOrDelayUntilScriptLoaded( function() {		
+
+		var ctx = SP.ClientContext.get_current();
+		var web = ctx.get_web();
+		var lists = web.get_lists();
+		//Set internal name of contact list
+		var list = lists.getByTitle('Contacts');
+		var query = new SP.CamlQuery();
+		//Create CAML query which gets all items from Contacts list where value of field ShowOnHomepage is set to Yes, ordered by column Sortorder
+		//Change criteria if required or use '<Geq><FieldRef Name=\'ID\'/><Value Type=\'Number\'>0</Value></Geq>' to load all items
+		query.set_viewXml(
+			'<View>' +
+				'<Query>' +
+					'<OrderBy><FieldRef Name=\'Sortorder\' Ascending=\'TRUE\'/></OrderBy>' +
+					'<Where>' +
+						'<Geq><FieldRef Name=\'ShowOnHomepage\'/><Value Type=\'String\'>True</Value></Geq>' +
+					'</Where>' +
+				'</Query>' +
+			'</View>');
+		var items = list.getItems(query);
+		
+		ctx.load(items);
+	 
+		ctx.executeQueryAsync(function() {
+			
+			//Create vars
+			var listItemEnumerator = items.getEnumerator();
+			var listItemInfo = '';
+			
+			//Iterate through returned list items
+			while (listItemEnumerator.moveNext()) {
+				
+				var oListItem = listItemEnumerator.get_current(); 
+				
+				var id = "";
+				var title = "";
+				var pictureURL = "";
+				var name = "";
+				var CWID = "";
+				var email = "";
+				var phone = "";
+				var mobile = "";
+				var connectionsProfileURL = "";
+				var order = "";
+				
+				//Set vars with list item values only when value available to avoid errors
+				if(oListItem.get_item('ID')){
+					id = oListItem.get_item('ID');
+				};
+				if(oListItem.get_item('Title')){
+					title = oListItem.get_item('Title');
+				};
+				if(oListItem.get_item('Email')){
+					email = oListItem.get_item('Email');
+				};
+				
+				/*Check if connections profile picture or uploaded picture should be used for contact picture*/
+				if(!oListItem.get_item('UseConnectionsPicture')){
+					if(oListItem.get_item('Picture')){
+						pictureURL = oListItem.get_item('Picture').get_url();
+					}else{
+						/*Set default placeholder image if no picture available*/
+						pictureURL = '/sites/001909/SiteAssets/AdvancedContacts/Icons/placeholderPerson.png';
+					}
+				}else{
+					//pictureURL = 'https://connections.bayer.com/files/form/login_redirect?redirect=http://connections.bayer.com/profiles/photo.do?email=' + email;
+					pictureURL = 'https://bayergroup.sharepoint.com/_vti_bin/DelveApi.ashx/people/profileimage?userId=' + email + '&size=L';
+				}
+				
+				// Set url to Connections profile
+				//connectionsProfileURL = 'https://connections.bayer.com/profiles/html/profileView.do?email=' + email;			
+				connectionsProfileURL = 'https://delve.office.com/?p=' + email + '&v=work';
+
+				
+
+				if(oListItem.get_item('Name')){
+					name = oListItem.get_item('Name').get_lookupValue();
+				};
+				if(oListItem.get_item('CWID')){
+					CWID = oListItem.get_item('CWID');
+				};
+				
+				if(oListItem.get_item('Phone')){
+					phone = oListItem.get_item('Phone');
+				};
+				if(oListItem.get_item('Mobile')){
+					mobile = oListItem.get_item('Mobile');
+				};
+				
+				if(oListItem.get_item('Sortorder')){
+					order = oListItem.get_item('Sortorder');
+				};
+				
+
+				//Write HTML for contacts to var
+				
+				listItemInfo +=
+				"<li id='contactItem_" + id + "' class='contactItem'>" +
+					"<div class='contactDetailsContainer'>" +
+						"<div class='contactPicture'>" +
+							"<img src='"+ pictureURL + "' alt='' />" +
+						"</div>" +
+						"<div class='contactDetails'>" +
+							"<a class='contactConnectionsIcon' href='" + connectionsProfileURL + "' target='_BLANK' title='Connections Profile'><img src='/sites/001909/SiteAssets/AdvancedContacts/Icons/Iconconnnew.png' alt='' /></a>" +
+							"<div class='contactName'>" + name + " <span style='cursor:hand'><img width='12' border='none' src='/_layouts/images/blank.gif' onload=IMNRC('"+ email +"') id='IMID"+ CWID +"' ShowOfflinePawn=1 alt='Presence bubble'></span> (" + CWID + ")</div>" +
+							"<div class='contactPosition'>" + title + "</div>" +
+							"<div class='contactPhone hasIcon'>" + phone + "</div>" +
+							"<div class='contactMobile hasIcon'>" + mobile + "</div>" +
+							"<div class='contactEmail hasIcon'><a href='mailto:" + email + "'>" + email + "</a></div>" +
+						"</div>" +
+					"</div>" +
+				"</li>";
+			}
+			
+			//Write rendered HTML into page
+			jQuery('#contactList').html('<ul>'+listItemInfo+'</ul>');
+			
+		});
+	},  'sp.js');
+</script>
+

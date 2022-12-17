@@ -1,0 +1,83 @@
+/*IMPORTANT: ADJUST IMAGE PATH TO ALL PICTURES AND ICONS*/
+
+#contactList{
+	margin-top: 10px;
+}
+
+.contactItem{
+    margin-bottom: 10px;
+	width: 350px;
+	/*Change background image to another color if you like. Available colors: contact_bg_green.png, contact_bg_grey.png and contact_bg_turquois.png*/
+	background: url('/sites/001826/SiteAssets/AdvancedContacts/BackgroundImages/contact_bg_blue.png') no-repeat bottom right;
+	list-style: none;
+}
+
+.contactDetailsContainer{
+	display: inline-block;
+	padding: 5px;
+	width: 340px;
+	border: 1px solid #0090c5;
+}
+
+.mapContactItem  .contactDetails{
+	font-size: 12px;
+}
+
+.mapContactItem .contactDetailsContainer{
+	border: none;
+}
+
+.contactPicture{
+	float: left;
+}
+
+.contactPicture img{
+	width: 100px;
+}
+
+.contactDetails{
+    padding-left: 115px;
+	margin-bottom: 10px;
+	font-size: 12px;
+}
+
+.contactName{
+    font-size: 16px;
+	color: #6bc200;
+	margin-bottom: 3px;
+}
+
+.contactConnectionsIcon{
+	float: right;
+}
+
+.contactConnectionsIcon img{
+	border: none;
+}
+
+.contactPosition, .contactMobile, .contactEmail, .contactPhone{
+    margin-bottom: 8px;
+}
+
+.contactPosition{
+	color: #0090c5;
+}
+
+.hasIcon{
+	background-repeat: no-repeat;
+	padding-left: 25px;
+	line-height: 16px;
+}
+
+/*Change Icon colors if you like. Available colors: green, blue and turquois*/
+.contactEmail{
+	background-image: url('/sites/001826/SiteAssets/AdvancedContacts/Icons/email_16_grey.png');
+}
+
+.contactPhone{
+	background-image: url('/sites/001826/SiteAssets/AdvancedContacts/Icons/phone_16_grey.png');
+}
+
+.contactMobile{
+	background-image: url('/sites/001826/SiteAssets/AdvancedContacts/Icons/mobile_16_grey.png');
+}
